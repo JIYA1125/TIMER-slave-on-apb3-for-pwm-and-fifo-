@@ -1,0 +1,62 @@
+# FIFO Documentation
+
+## Configuration
+
+The FIFO uses:
+
+```text
+Data width : 8 bits
+Depth      : 8 entries
+```
+
+Therefore the maximum storage capacity is:
+
+```text
+8 × 8 = 64 bits
+```
+
+## Signals
+
+| Signal     | Direction | Description         |
+| ---------- | --------- | ------------------- |
+| `clk`      | Input     | System clock        |
+| `rst`      | Input     | Reset               |
+| `wr_en`    | Input     | Write enable        |
+| `rd_en`    | Input     | Read enable         |
+| `data_in`  | Input     | 8-bit input data    |
+| `data_out` | Output    | Current FIFO output |
+| `full`     | Output    | FIFO full flag      |
+| `empty`    | Output    | FIFO empty flag     |
+
+## Write
+
+When:
+
+```text
+wr_en = 1
+full = 0
+```
+
+the input value is stored in the FIFO.
+
+## Read
+
+When:
+
+```text
+rd_en = 1
+empty = 0
+```
+
+the read pointer advances to the next FIFO entry.
+
+## Status
+
+The FIFO generates:
+
+```text
+FULL
+EMPTY
+```
+
+These signals are used by the APB slave to prevent invalid accesses.
