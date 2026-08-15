@@ -1,0 +1,130 @@
+`timescale 1ns / 1ps
+
+module apb3_master (
+
+    input  wire       clk,
+    input  wire       rst,
+
+    input  wire       start,
+    input  wire       rw,
+
+    // [15:8] = write data
+    // [7:0]  = address
+    input  wire [15:0] command_data,
+
+    input  wire       pready,
+    input  wire       pslverr,
+    input  wire [7:0] prdata,
+
+    output reg        psel,
+    output reg        penable,
+    output reg        pwrite,
+
+    output reg [7:0]  paddr,
+    output reg [7:0]  pwdata,
+
+    output reg [7:0]  read_data,
+
+    output reg        done,
+    output reg        error
+);
+
+    localparam IDLE   = 2'd0;
+    localparam SETUP  = 2'd1;
+    localparam ACCESS = 2'd2;
+
+    reg [1:0] state;
+
+    always @(posedge clk or posedge rst) begin
+
+        if (rst) begin
+
+            state      <= IDLE;
+
+            psel       <= 1'b0;
+            penable    <= 1'b0;
+            pwrite     <= 1'b0;
+
+            paddr      <= 8'd0;
+            pwdata     <= 8'd0;
+
+            read_data  <= 8'd0;
+
+            done       <= 1'b0;
+            error      <= 1'b0;
+
+        end
+
+        else begin
+
+            done <= 1'b0;
+            error <= 1'b0;
+
+            case (state)
+
+                IDLE: begin
+
+                    psel    <= 1'b0;
+                    penable <= 1'b0;
+
+                    if (start) begin
+
+                        paddr  <= command_data[7:0];
+                        pwdata <= command_data[15:8];
+
+                        pwrite <= rw;
+
+                        psel   <= 1'b1;
+
+                        state  <= SETUP;
+
+                    end
+
+                end
+
+
+                SETUP: begin
+
+                    // APB ACCESS phase
+                    penable <= 1'b1;
+
+                    state <= ACCESS;
+
+                end
+
+
+                ACCESS: begin
+
+                    if (pready) begin
+
+                        if (!pwrite)
+                            read_data <= prdata;
+
+                        if (pslverr)
+                            error <= 1'b1;
+
+                        done <= 1'b1;
+
+                        psel    <= 1'b0;
+                        penable <= 1'b0;
+
+                        state <= IDLE;
+
+                    end
+
+                end
+
+
+                default: begin
+
+                    state <= IDLE;
+
+                end
+
+            endcase
+
+        end
+
+    end
+
+endmodule
