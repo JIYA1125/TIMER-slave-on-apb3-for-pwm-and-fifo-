@@ -770,19 +770,4 @@ This project demonstrates several important RTL and FPGA concepts:
 # Author
 
 **Your Name**
-
-FPGA / Digital Design Project
-
-Replace this section with your GitHub username, university, course, or project information.
-
----
-
-# License
-
-This project is released under the MIT License. See [`LICENSE`](LICENSE) for details.
-
----
-
-# Acknowledgements
-
-This project was developed as an educational FPGA/RTL design exercise to explore APB-style peripheral communication, FIFO design, timer logic, PWM generation, and FPGA hardware interfacing.
+JIYA MULLA
