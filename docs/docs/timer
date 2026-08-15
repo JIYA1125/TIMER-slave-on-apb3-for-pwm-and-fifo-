@@ -1,0 +1,81 @@
+# FIFO Elapsed Timer
+
+## Purpose
+
+The timer measures the time between a FIFO write and a FIFO read.
+
+## Operation
+
+### Start
+
+A FIFO write generates:
+
+```text
+start = 1
+```
+
+The timer is reset:
+
+```text
+seconds = 0
+```
+
+and begins counting.
+
+### Count
+
+For a 100 MHz clock:
+
+```text
+100,000,000 clock cycles = 1 second
+```
+
+The timer increments once per second.
+
+### Stop
+
+A FIFO read generates:
+
+```text
+stop = 1
+```
+
+The timer stops at its current value.
+
+## Example
+
+```text
+BTNU
+ ↓
+FIFO WRITE
+ ↓
+Timer = 00
+ ↓
+01
+ ↓
+02
+ ↓
+03
+ ↓
+BTNC
+ ↓
+FIFO READ
+ ↓
+Timer STOP
+```
+
+The timer therefore measures approximately three seconds.
+
+## Display
+
+The timer value is shown as a four-digit decimal value:
+
+```text
+0000
+0001
+0002
+...
+0099
+```
+
+The current implementation saturates at 99 seconds.
