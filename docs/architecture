@@ -1,0 +1,106 @@
+# System Architecture
+
+## Overview
+
+The system is divided into five major sections:
+
+```text
+                   +----------------+
+                   | User Interface |
+                   | Buttons/Switch |
+                   +-------+--------+
+                           |
+                           v
+                   +---------------+
+                   | Command Logic |
+                   +-------+-------+
+                           |
+                           v
+                   +---------------+
+                   |   APB Master  |
+                   +-------+-------+
+                           |
+                    APB-style bus
+                           |
+             +-------------+-------------+
+             |                           |
+             v                           v
+      +-------------+             +-------------+
+      | FIFO Slave  |             | PWM Slave   |
+      +------+------+             +------+------+
+             |                           |
+             v                           v
+      +-------------+             +-------------+
+      | FIFO        |             | PWM Output  |
+      +------+------+             +-------------+
+             |
+             v
+      +-------------+
+      | FIFO Timer  |
+      +------+------+
+             |
+             v
+      +-------------+
+      | 7-Segment   |
+      +-------------+
+```
+
+## Data Flow
+
+A FIFO write begins with a button press.
+
+```text
+Switches
+   ↓
+Button debounce
+   ↓
+Edge detector
+   ↓
+Command generator
+   ↓
+APB master
+   ↓
+FIFO APB slave
+   ↓
+FIFO
+```
+
+At the same time, the FIFO write command starts the elapsed timer.
+
+```text
+FIFO WRITE
+    ↓
+Timer reset
+    ↓
+Timer starts counting
+```
+
+A FIFO read performs the reverse operation:
+
+```text
+BTNC
+ ↓
+APB READ
+ ↓
+FIFO
+ ↓
+FIFO DATA OUT
+ ↓
+Display
+```
+
+The read command also stops the timer.
+
+## Main Timing Relationship
+
+```text
+WRITE                         READ
+  |                             |
+  v                             v
++---+---------------------------+---+
+|       elapsed-time interval       |
++-----------------------------------+
+  |<----------- timer ------------->|
+```
+
+The timer therefore measures the interval between the two FIFO events.
