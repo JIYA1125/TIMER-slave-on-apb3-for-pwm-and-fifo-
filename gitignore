@@ -1,0 +1,42 @@
+# Vivado generated files
+*.jou
+*.log
+*.str
+*.pb
+*.wdb
+*.wcfg
+
+# Vivado project directories
+.vivado/
+.cache/
+.hw/
+.ip_user_files/
+.sim/
+.gen/
+.runs/
+.data/
+
+# Generated output
+*.bit
+*.bin
+*.ltx
+*.mmi
+*.elf
+
+# Backup files
+*.bak
+*.backup
+*.tmp
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+
+# Temporary files
+tmp/
+temp/
